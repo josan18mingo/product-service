@@ -1,0 +1,84 @@
+openapi: 3.0.3
+info:
+  title: products API
+  version: 1.0.0
+  description: API para gestión de productos
+
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /products:
+    get:
+      operationId: getActiveProducts
+      tags: [Products]
+      summary: Product
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductDTO"
+  /product/{id}:
+    get:
+      operationId: getProductById
+      tags: [ Products ]
+      summary: Get product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDTO"
+        '404':
+          description: Product not found
+  /product:
+    post:
+      operationId: createProduct
+      tags: [Products]
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductDTO"
+      responses:
+        '201':
+          description: Product created
+
+
+components:
+  schemas:
+    ProductDTO:
+      type: object
+      x-lombok-builder: true
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        price:
+          type: number
+          format: double
+    CreateProductDTO:
+      type: object
+      required: [name, price]
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+          format: double

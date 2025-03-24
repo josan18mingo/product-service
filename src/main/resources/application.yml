@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/productdb
+    username: postgres
+    password: josan
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db
+    baseline-on-migrate: true
+    schemas: public
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+  springdoc:
+    packages-to-scan: com.ecommerce.api, com.ecommerce.controller
