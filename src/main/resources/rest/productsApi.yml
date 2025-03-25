@@ -10,6 +10,10 @@ servers:
 paths:
   /products:
     get:
+      x-cors:
+        allowedOrigins: "*"
+        allowedMethods: "GET, POST, PUT, DELETE"
+        allowedHeaders: "Content-Type, Authorization"
       operationId: getActiveProducts
       tags: [Products]
       summary: Product
@@ -24,6 +28,10 @@ paths:
                   $ref: "#/components/schemas/ProductDTO"
   /product/{id}:
     get:
+      x-cors:
+        allowedOrigins: "*"
+        allowedMethods: "GET, POST, PUT, DELETE"
+        allowedHeaders: "Content-Type, Authorization"
       operationId: getProductById
       tags: [ Products ]
       summary: Get product by ID

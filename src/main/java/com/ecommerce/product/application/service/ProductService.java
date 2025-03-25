@@ -3,6 +3,8 @@ package com.ecommerce.product.application.service;
 import com.ecommerce.product.application.port.ProductServicePort;
 import com.ecommerce.product.domain.entity.Product;
 import com.ecommerce.product.application.port.ProductRepositoryPort;
+import com.ecommerce.product.domain.event.ProductCreatedEvent;
+import com.ecommerce.product.infrastructure.outbound.kafka.KafkaProductEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.UUID;
 public class ProductService implements ProductServicePort {
 
     private final ProductRepositoryPort repository;
+    private final KafkaProductEventPublisher kafkaProductEventPublisher;
 
 
     @Override
@@ -25,7 +28,15 @@ public class ProductService implements ProductServicePort {
                 .name(name)
                 .active(true)
                 .build();
-        return repository.save(product);
+        Product productSaved = repository.save(product);
+        ProductCreatedEvent event = new ProductCreatedEvent(
+                productSaved.getId(),
+                productSaved.getName(),
+                productSaved.getPrice(),
+                productSaved.isActive()
+        );
+        kafkaProductEventPublisher.publish(event);
+        return productSaved;
     }
 
     @Override

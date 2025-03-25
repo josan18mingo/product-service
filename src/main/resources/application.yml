@@ -1,8 +1,10 @@
+server:
+  port: 8080
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/productdb
     username: postgres
-    password: josan
+    password: postgres
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
@@ -12,7 +14,23 @@ spring:
   jpa:
     hibernate.ddl-auto: update
     show-sql: true
-  kafka:
-    bootstrap-servers: localhost:9092
   springdoc:
-    packages-to-scan: com.ecommerce.api, com.ecommerce.controller
+    swagger-ui:
+      path: /swagger-ui.html
+      enabled: true
+  services:
+    zookeeper:
+      image: confluentinc/cp-zookeeper:7.3.0
+    kafka:
+      bootstrap-servers: kafka:9092
+      producer:
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.packages: "com.ecommerce.product.domain.event"
+        spring.json.use.type.headers: false
+      image: confluentinc/cp-kafka:7.3.0
+      depends_on: [ zookeeper ]
+      ports: [ "9092:9092" ]
+      environment:
+        KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
